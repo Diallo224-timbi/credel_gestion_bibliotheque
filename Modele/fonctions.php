@@ -156,7 +156,7 @@
 		$reponse = $connexion->query('SELECT *FROM livre');	
 		$liste = $reponse->fetchall();
 		return $liste;
-		$reponse->closeCursors();
+		$reponse->closeCursors(); 
 	}
 	function getLivreEcrite()
 	{
