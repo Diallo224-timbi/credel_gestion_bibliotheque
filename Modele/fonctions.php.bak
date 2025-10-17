@@ -1,0 +1,290 @@
+<?php
+	include_once('connexion.php');
+	function getSalle()
+	{
+	//On affiche la liste des Garçon de la table etudiant
+		global $connexion;
+		$reponse = $connexion->query('SELECT *FROM salle');
+		
+		//Affichage de chaque entrée une à une
+		$liste = $reponse->fetchall();
+		return $liste;
+		//libere la connexion au serveur afin que d'autre instruction sql puissent etre emis
+		$reponse->closeCursors();
+	}
+	function setSalle()
+	{
+		global $connexion;
+		//requete preparées
+		$reponse = $connexion->prepare("INSERT INTO salle (idSalle,idUser,nbreRayon)
+										VALUES(:id,:nom,:nombre) ");
+		$reponse->execute(array('id'=>$_POST['idSalle'],
+								'nom'=>$_POST['nom'],
+								'nombre'=>$_POST['NombreRayon'],
+								));
+		
+		return $reponse;
+		$reponse->closeCursors();								
+	}
+	//******************************User****************************
+	// ***************************************************************
+	function setUsers()
+	{
+			$photo=$_FILES['photo']; $piece=$_FILES['piece'];
+			$filename=$photo['name'];$filenamePiece=$piece['name'];
+			$separation=(explode('.',$filename)); $separationP=explode('.',$filenamePiece);
+			$exten=strtolower(end($separation)); $extPiece=strtolower(end($separationP));
+			$filtemp=$photo['tmp_name'];		$filetmpPie=$piece['tmp_name'];
+			$extension=array('png','jpeg','jpg','jfif'); $extensionPiece=array('png','jpeg','jpg','pdf','doc');
+			if (in_array($exten,$extension)) 
+			{
+				$uploadImage="../../images/".$filename;
+				if(move_uploaded_file($filtemp,$uploadImage))
+				{
+					if (in_array($extPiece,$extensionPiece)) 
+					{
+						$uploadPiece="../../dossierCNI/".$filenamePiece;
+						if (move_uploaded_file($filetmpPie,$uploadPiece))
+						{
+							global $connexion;
+							$reponse = $connexion->prepare("INSERT INTO users (
+							idUser,nom,prenom,sexe,
+							dateNais,lieuNais,adresse,
+							nationnalite,profession,email,
+							PASSWORDe,photo,
+							pieceIdentite)
+							VALUES(:id,:nom,:p,:s,:d,:l,:adr,:na,:pro,:em,:pwd,:ph,:pid) ");
+							$reponse->execute(array('id'=>$_POST['id'],
+											'nom'=>$_POST['nom'],
+											'p'=>$_POST['prenom'],
+											's'=>$_POST['sexe'],
+											'd'=>$_POST['dateNaissance'],
+											'l'=>$_POST['lieunaissance'],
+											'adr'=>$_POST['adresse'],
+											'na'=>$_POST['nationnalite'],
+											'pro'=>$_POST['profession'],
+											'em'=>$_POST['email'],
+											'pwd'=>md5($_POST['password']),
+											'ph'=>$uploadImage,
+											'pid'=>$uploadPiece
+											));
+							return $reponse;
+							$reponse->closeCursors();
+						}
+					}
+				}else {
+					die(error_clear_last());
+				}	
+			}
+	}
+	function getUser()
+	{
+	//On affiche la liste des Garçon de la table etudiant
+		global $connexion;
+		$reponse = $connexion->query('SELECT *FROM users');	
+		//Affichage de chaque entrée une à une
+		$liste = $reponse->fetchall();
+		return $liste;
+		$reponse->closeCursors();
+	}
+	
+//*******************Livre************************ */
+//*********************************************** */	
+
+	function setLivre()
+	{
+		$docum=$_FILES['document'];
+		$filenamedocum=$docum['name'];
+		$separationdoc=explode('.',$filenamedocum);
+		$extdocum=strtolower(end($separationdoc));
+		$filetmpdocum=$docum['tmp_name'];
+		$extensiondocum=array('png','jpeg','jpg','pdf','docx');
+		if (in_array($extdocum,$extensiondocum)) 
+		{
+			$uploaddocum="../../dossierLivres/".$filenamedocum;
+			if (move_uploaded_file($filetmpdocum,$uploaddocum))
+			{
+				global $connexion;
+				$reponse = $connexion->prepare("INSERT INTO livre (
+												idLivre,idEtagere,titre,
+												maisonEdition,datePub,dateEntree,codeLiv,
+												telechargeable,nbreExemplaire,document)
+											VALUES(
+												:id,:idEt,:titr,:mEd,
+												:dPub,:dEnt,:codLiv,
+												:okT,:nbEx,:docu)
+											");
+				$reponse->execute(array(
+								'id'=>$_POST['id'],
+								'idEt'=>$_POST['idEtagere'],
+								'titr'=>$_POST['titre'],
+								'mEd'=>$_POST['maisonEdition'],
+								'dPub'=>$_POST['datePub'],
+								'dEnt'=>$_POST['dateEntree'],
+								'codLiv'=>$_POST['codeLivre'],
+								'okT'=>$_POST['telech'],
+								'nbEx'=>$_POST['exemp'],
+								'docu'=>$uploaddocum
+								));
+				return $reponse;
+				$reponse->closeCursors();
+			}
+		}else {
+			$_SESSION['erreur']="ce type de fichier n'existe pas veuillez choisir un fichier pdf ou image ";
+		}
+		//requete preparées							
+	}
+	
+	function getLivre()
+	{
+		global $connexion;
+		$reponse = $connexion->query('SELECT *FROM livre');	
+		$liste = $reponse->fetchall();
+		return $liste;
+		$reponse->closeCursors();
+	}
+	function getLivreEcrite()
+	{
+		global $connexion;
+		$reponse = $connexion->query('SELECT auteur.idAuteur,livre.idLivre,auteur.nomlAuteur, 
+											auteur.prenomAuteur,livre.titre,livre.document
+										FROM ecrire JOIN
+										     auteur JOIN
+										     livre
+										ON
+										((ecrire.idLivre = livre.idLivre) AND(
+											ecrire.idAuteur = auteur.idAuteur
+										))
+										GROUP BY auteur.idAuteur,livre.idLivre,auteur.nomlAuteur, 
+										auteur.prenomAuteur,livre.titre,livre.document'
+		);	
+		$liste = $reponse->fetchall();
+		return $liste;
+		$reponse->closeCursors();
+	}
+	function getLivreSearch($titre)
+	{
+		global $connexion;
+		$reponse = $connexion->query('SELECT auteur.idAuteur,livre.idLivre,auteur.nomlAuteur, 
+											auteur.prenomAuteur,livre.titre,livre.document
+										FROM ecrire JOIN
+										     auteur JOIN
+										     livre
+										ON
+										((ecrire.idLivre = livre.idLivre) AND(
+											ecrire.idAuteur = auteur.idAuteur
+										)) 
+										WHERE livre.titre LIKE CONCAT("%","'.$titre.'","%") 
+										GROUP BY auteur.idAuteur,livre.idLivre,auteur.nomlAuteur, 
+										auteur.prenomAuteur,livre.titre,livre.document'
+		);	
+		$liste = $reponse->fetchall();
+		return $liste;
+		$reponse->closeCursors();
+	}
+	function getLivreIdSearch($id)
+	{
+		global $connexion;
+		$reponse = $connexion->query('SELECT auteur.idAuteur,livre.idLivre,auteur.nomlAuteur, 
+											auteur.prenomAuteur,livre.titre,livre.document
+										FROM ecrire JOIN
+										     auteur JOIN
+										     livre
+										ON
+										((ecrire.idLivre = livre.idLivre) AND(
+											ecrire.idAuteur = auteur.idAuteur
+										)) 
+										WHERE ecrire.idLivre LIKE CONCAT("%","'.$id.'","%") 
+										GROUP BY auteur.idAuteur,livre.idLivre,auteur.nomlAuteur, 
+										auteur.prenomAuteur,livre.titre,livre.document'
+		);	
+		$liste = $reponse->fetchall();
+		return $liste;
+		$reponse->closeCursors();
+	}
+//********************************Consultation */
+function setConsultation()
+{
+	$dt = date('l d m Y h:i:s');
+	global $connexion;
+	//requete preparées
+	$reponse = $connexion->prepare("INSERT INTO consulter (idLivre,idUser,dateConsul,motifConsult)
+									VALUES(:id,:idUser,:datC,:motif) ");
+	$reponse->execute(array('id'=>$_POST['idLivre'],
+							'idUser'=>$_POST['idUser'],
+							'datC'=>$dt,
+							'motif'=>$_POST['motif'],
+							));
+	return $reponse;
+	$reponse->closeCursors();	
+	
+}
+/***************************AUTEUR**************
+***********************************************/
+function setAuteur()
+	{
+		global $connexion;
+		//requete preparées
+		$reponse = $connexion->prepare("INSERT INTO auteur(idAuteur,nomlAuteur,prenomAuteur,dateNais,lieuNais,nationalite,profession)
+										VALUES(:id,:nom,:prenom,:d,:l,:na,:pro) ");
+		$reponse->execute(array('id'=>$_POST['id'],
+								'nom'=>$_POST['nom'],
+								'prenom'=>$_POST['prenom'],
+								'd'=>$_POST['dateNaissance'],
+								'l'=>$_POST['lieunaissance'],
+								'na'=>$_POST['nationnalite'],
+								'pro'=>$_POST['profession']
+								));
+		
+		return $reponse;
+		$reponse->closeCursors();								
+	}
+	function getAuteur()
+	{
+	//On affiche la liste des Garçon de la table etudiant
+		global $connexion;
+		$reponse = $connexion->query('SELECT *FROM auteur');	
+		//Affichage de chaque entrée une à une
+		$liste = $reponse->fetchall();
+		return $liste;
+		$reponse->closeCursors();
+	}
+	//****************************ECRIRE*************
+	//**********************************************
+	function setEcrire()
+	{
+		global $connexion;
+		//requete preparées
+		$reponse = $connexion->prepare("INSERT INTO Ecrire (idLivre,idAuteur)
+										VALUES(:idl,:ida)");
+		$reponse->execute(array('idl'=>$_POST['idLivre'],
+								'ida'=>$_POST['idAuteur'],
+								));
+		
+		return $reponse;
+		$reponse->closeCursors();								
+	}
+	
+//*****************UPDATE****************
+//***************************************
+//************USERS***********************
+function getUpdateUser($id)
+{
+//On affiche la liste des Garçon de la table etudiant
+	global $connexion;
+	$reponse = $connexion->query('SELECT *FROM users WHERE idUser='.$id.'');	
+	//Affichage de chaque entrée une à une
+	$liste = $reponse->fetchall();
+	return $liste;
+	$reponse->closeCursors();
+}
+function updateUsers($id)
+	{
+		global $connexion;
+		$reponse = $connexion->prepare ('UPDATE Users SET etat="'.$_POST['etat']."' WHERE idUser="'.$id.'" ');
+		$reponse->execute();
+		return $reponse;
+		$reponse->closeCursors();
+	}
+	
+ ?>

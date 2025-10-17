@@ -1,0 +1,99 @@
+<?php
+    session_start();
+?>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.5.3/css/bootstrap.min.css">
+	<title>credelFouta.com</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="icon" type="image/x-icon" href="../accueil/assets/favicon.ico" />
+</head>
+<body>
+    <div class="container" >
+        <h3 class="display-4 text-center">Inscription</h3>
+        <form class=" my-4 p-3  rounded shadow-sm" 
+                style="width: 100%; border-radius: 10px " 
+                enctype="multipart/form-data" 
+                method= "POST" action="../../Controleur/utilisateur/ajout.php">
+                <div class="alert alert-success">
+                <?php
+                    if(isset($_SESSION['Erreur']))
+                    {
+                        echo $_SESSION['Erreur'];
+						unset($_SESSION['Erreur']);
+                    }	
+                ?> 
+                </div>
+            <div class="form-row">
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="identifiant" name="id" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="First name" name="nom" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Last name" name="prenom" >
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <input type="Date" class="form-control" placeholder="Date de Naissance" name="dateNaissance" > 
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Lieu de Naissance" name="lieunaissance" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Adresse" name="adresse">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Profession"name="profession" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Nationalité" name="nationnalite" >
+                </div>
+                <div class="col">
+                    <select class="custom-select" id="inputGroupSelect01"  name="sexe">
+                        <option selected >Sexe</option>
+                        <option value="M" name="sexe">Masculin</option>
+                        <option value="F" name="sexe">Feminin</option>
+                    </select>
+                </div>   
+            </div>
+            <div class="form-row">
+                <div class="col form-group">
+                <label for="" class="form-label">Adresse email</label>
+                    <input type="email" class="form-control" placeholder="Adresse email" name="email" >
+                </div>
+                <div class="col">
+                <label for="" class="form-label">PassWord</label>
+                    <input type="password" class="form-control" placeholder="password" name="password" required>
+                </div>
+                <div class="col">
+                <label for="" class="form-label">Confirmer Votre mot de passe</label> 
+                    <input type="password" class="form-control" placeholder="confirmer votre mot de passe" name="confpassword" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    Photo d'identité<input type="file" name="photo" id="update" /> 
+                </div>
+                <div class="col">
+                    Pièce d'identité<input type="file" name="piece" id="update">
+                </div>
+            </div>
+			<hr>
+            <div class="form-group">
+                <div>
+                    <button type="submit" class="btn btn-primary" name="emvoyer">Submit</button>
+                    <a href="../connexion/connexion.php">Exit</a>
+                    <a href="liste.php"><i></i></a>
+               </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

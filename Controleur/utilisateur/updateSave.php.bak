@@ -1,0 +1,27 @@
+<?php
+session_start();
+	if(isset($_POST['id'])){
+		if(isset($_POST['etat'])){
+			include_once('../../Modele/fonctions.php');
+			$id=$_POST['id'];
+			$resultat=updateUsers($id);
+			if($resultat){
+			$_SESSION['erreur']="Compte activé/desactivé avec succès";
+			header('location:../../Vue/utilisateur/liste.php');
+			}else{
+				echo "ajout non effectue";
+			//$_SESSION['erreur']="Compte activé avec succès";
+			//header('location:../../Vue/utilisateur/liste.php');
+			}
+		}else{
+		//$_SESSION['erreur']="echec sur la variable etat";
+		echo 'variable etat';
+		//header('location:../../Vue/utilisateur/liste.php');		
+		}
+	}else{
+		echo 'variable id';
+		//$_SESSION['erreur']="echec sur la variable id";
+		//header('location:../../Vue/utilisateur/liste.php');	
+	}
+
+?>

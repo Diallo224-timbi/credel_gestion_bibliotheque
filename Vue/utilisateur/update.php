@@ -1,0 +1,99 @@
+<?php
+    session_start();
+	include_once('../../controleur/utilisateur/update.php');
+?>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.5.3/css/bootstrap.min.css">
+	<title>credelFouta.com</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="icon" type="image/x-icon" href="../accueil/assets/favicon.ico" />
+</head>
+<body>
+    <div class="container" >
+        <h3 class="display-4 text-center">Update of the Users</h3>
+        <form class=" my-4 p-3  rounded shadow-sm" 
+                style="width:100%; border-radius: 2px;" 
+                enctype="multipart/form-data" 
+                method= "POST" action="../../Controleur/utilisateur/updateSave.php">
+			<?php foreach($liste as $key => $element){?>
+            <div class="form-row">
+                <div class="col">
+			<input type="number" class="form-control" value="<?=$element['idUser']?>" name="id" onclick="return false" readonly>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" value="<?=$element['nom']?>" name="nom" readonly>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" value="<?=$element['prenom']?>" name="prenom" readonly >
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <input type="Date" class="form-control" value="<?=$element['dateNais']?>" name="dateNaissance" readonly> 
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" value="<?=$element['lieuNais']?>" name="lieunaissance"readonly >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" value="<?=$element['adresse']?>" name="adresse"readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" value="<?=$element['profession']?>"name="profession" readonly>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" value="<?=$element['nationalite']?>" name="nationalite"readonly >
+                </div>
+                <div class="col">
+					<input type="text" class="form-control" value="<?=$element['sexe']?>" name="Sexe" readonly >
+                </div>   
+            </div>
+            <div class="form-row">
+                <div class="col form-group">
+                <label for="" class="form-label">Adresse email</label>
+                    <input type="email" class="form-control" value="<?=$element['email']?>" name="email" readonly >
+                </div>
+                <div class="col">
+                <label for="" class="form-label">PassWord</label>
+                    <input type="text" class="form-control" value="<?=$element['PASSWORDe']?>" name="password" readonly>
+                </div>
+				<div class="col">  
+					<label for="" class="form-label">Statut</label>
+                    <input type="text" class="form-control" value="<?=$element['statut']?>" name="statut" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <label for="" class="form-label">Photo</label>
+					<input type="text" class="form-control" value="<?=$element['photo']?>" name="photo" readonly /> 
+                </div>
+                <div class="col">
+                    <label for="" class="form-label">Pièce d'identité</label>
+					<input type="text" class="form-control" value="<?=$element['pieceIdentite']?>" name="piece" readonly /> 
+                </div>
+				<div class="col">
+                    <label for="" class="form-label">Etat</label>
+                    <select name="etat" class="form-control">
+                        <option></option>
+                        <option value="1">Activé</option>
+                        <option value="0">Desactivé</option>
+                    </select>		
+                </div>
+            </div>
+			<?php } ?>
+                <hr>
+            <div class="form-group">
+                <div>
+                    <button type="submit" class="btn btn-primary" name="emvoyer">Submit</button>
+                    <a href="../connexion/connexion.php">Log out</a>
+                    <a href="liste.php"><i>View</i></a>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
